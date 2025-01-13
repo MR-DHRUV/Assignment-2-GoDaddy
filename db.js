@@ -3,7 +3,7 @@ const { handleError } = require('./utils');
 
 
 // connect to in-file database
-const db = new sqlite3.Database('./database.sqlite', (err) => {
+const db = new sqlite3.Database('./database/data.sqlite', (err) => {
     if (err) {
         console.error('Error connecting to database:', err.message);
     } else {
@@ -22,6 +22,9 @@ const createTables = () => {
                 email TEXT NOT NULL UNIQUE
             );
         `, handleError);
+
+        // enable foreign key constraints
+        db.run('PRAGMA foreign_keys = ON;', handleError);
 
         // Create Blogs table
         db.run(`

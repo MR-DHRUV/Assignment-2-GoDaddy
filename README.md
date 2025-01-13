@@ -260,6 +260,9 @@ All endpoints follow a consistent response format:
   "id": "integer",
   "title": "string",
   "content": "string",
-  "authorId": "integer"
+  "authorId": "integer",  // references to User.id, On Delete: CASCADE
+  "likeCount": "integer",
 }
+
+When a user is deleted, all posts created by the user are also deleted.
 ```

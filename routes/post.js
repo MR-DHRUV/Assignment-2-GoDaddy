@@ -6,7 +6,7 @@ const { checkId } = require('../middleware/checkId');
 const { handleError, handleSuccess } = require('./utils');
 const { body, validationResult } = require('express-validator');
 
-// Route to create a new post
+// Route to create a new blog post
 router.post(
     '/blogs',
     [
@@ -38,7 +38,7 @@ router.post(
                     if (err) {
                         return handleError(res, 500, err);
                     }
-                    handleSuccess(res, 201, 'Post created successfully', { postId });
+                    handleSuccess(res, 201, 'Blog post created successfully', { postId });
                 });
             });
 
@@ -57,9 +57,9 @@ router.get('/blogs/:id', checkId, async (req, res) => {
                 return handleError(res, 500, err);
             }
             if (!post) {
-                return handleError(res, 404, `Post with ID ${postId} not found.`);
+                return handleError(res, 404, `Blog post with ID ${postId} not found.`);
             }
-            handleSuccess(res, 200, 'Post fetched successfully', { post });
+            handleSuccess(res, 200, 'Blog post fetched successfully', { post });
         });
     } catch (error) {
         handleError(res, 500, error);
@@ -82,7 +82,7 @@ router.get('/blogs/user/:id', checkId, async (req, res) => {
             }
 
             // Return the posts and total count for pagination UI
-            handleSuccess(res, 200, 'Posts fetched successfully', { posts, total });
+            handleSuccess(res, 200, 'Blog posts fetched successfully', { posts, total });
         });
     } catch (error) {
         handleError(res, 500, error);
@@ -103,14 +103,14 @@ router.get('/blogs', async (req, res) => {
             }
 
             // Return paginated posts and total count for pagination UI
-            handleSuccess(res, 200, 'Posts fetched successfully', { posts, total });
+            handleSuccess(res, 200, 'Blog posts fetched successfully', { posts, total });
         });
     } catch (error) {
         handleError(res, 500, error);
     }
 });
 
-// Route to update a post by ID
+// Route to update a blog post by ID
 router.put(
     '/blogs/:id',
     checkId,
@@ -128,7 +128,7 @@ router.put(
         }
 
         try {
-            const updates = req.body, authorId = updates.authorId;
+            const updates = req.body, authorId = updates.authorId, postId = req.params.id;
 
             // check if authorId exists
             User.getUserById(authorId, (err, user) => {
@@ -144,9 +144,9 @@ router.put(
                         return handleError(res, 500, err);
                     }
                     if (changes === 0) {
-                        return handleError(res, 404, `Post with ID ${postId} not found or no changes made.`);
+                        return handleError(res, 404, `Blog post with ID ${postId} not found or no changes made.`);
                     }
-                    handleSuccess(res, 200, 'Post updated successfully');
+                    handleSuccess(res, 200, 'Blog post updated successfully');
                 });
             });
         } catch (error) {
@@ -155,7 +155,7 @@ router.put(
     }
 );
 
-// Route to delete a post by ID
+// Route to delete a blog post by ID
 router.delete('/blogs/:id', checkId, async (req, res) => {
     const postId = req.params.id;
 
@@ -167,15 +167,16 @@ router.delete('/blogs/:id', checkId, async (req, res) => {
             if (changes === 0) {
                 return handleError(res, 404, `Post with ID ${postId} not found.`);
             }
-            handleSuccess(res, 200, 'Post deleted successfully');
+            handleSuccess(res, 200, 'Blog post deleted successfully');
         });
     } catch (error) {
         handleError(res, 500, error);
     }
 });
 
-// Route to like a post
+// Route to like a blog post
 router.post('/blogs/:id/like', checkId, async (req, res) => {
+    const postId = req.params.id;
     try {
         Post.likePost(postId, (err, changes) => {
             if (err) {
@@ -184,7 +185,7 @@ router.post('/blogs/:id/like', checkId, async (req, res) => {
             if (changes === 0) {
                 return handleError(res, 404, `Post with ID ${postId} not found.`);
             }
-            handleSuccess(res, 200, 'Post liked successfully');
+            handleSuccess(res, 200, 'Blog post liked successfully');
         });
     } catch (error) {
         handleError(res, 500, error);
